@@ -1,0 +1,283 @@
+
+ CEP001.COB                              Thu Jan 26 18:43:34 2017    Page   1
+ line number source line   Microsoft COBOL                       Version 2.20
+
+   1         IDENTIFICATION DIVISION.
+   2         PROGRAM-ID. CEP001.
+   3         AUTHOR. ANGELO.
+   4        **************************************
+   5        * MANUTENCAO DO CADASTRO DE PRODUTO  *
+   6        **************************************
+   7        *----------------------------------------------------------------
+   8         ENVIRONMENT DIVISION.
+   9         CONFIGURATION SECTION.
+  10         SPECIAL-NAMES.
+  11                           DECIMAL-POINT IS COMMA.
+  12         INPUT-OUTPUT SECTION.
+  13         FILE-CONTROL.
+  14         SELECT PRODUTO ASSIGN TO DISK
+  15                      ORGANIZATION IS INDEXED
+  16                      ACCESS MODE  IS DYNAMIC
+  17                      RECORD KEY   IS CODPRO
+  18                      FILE STATUS  IS ST-ERRO
+  19                      ALTERNATE RECORD KEY IS CHAVE2 = DESCR
+  20                                                        WITH DUPLICATES.
+  21        *
+  22        *-----------------------------------------------------------------
+  23         DATA DIVISION.
+  24         FILE SECTION.
+  25         FD PRODUTO
+  26                 LABEL RECORD IS STANDARD
+  27                 VALUE OF FILE-ID IS "PRODUTO.DAT".
+  28         01 REGPRO.
+  29                  03 CODPRO          PIC 9(06).
+  30                  03 DESCR           PIC X(30).
+  31                  03 UNID            PIC X(02).
+  32                  03 QUANT           PIC 9(05)V9.
+  33                  03 PRECMD          PIC 9(06)V999.
+  34                  03 VRESTOQ         PIC 9(10)v99.
+  35                  03 FUNCIONARIO     PIC X(30).
+  36        *
+  37        *-----------------------------------------------------------------
+  38         WORKING-STORAGE SECTION.
+  39         77 W-SEL        PIC 9(01) VALUE ZEROS.
+  40         77 W-CONT       PIC 9(06) VALUE ZEROS.
+  41         77 W-OPCAO      PIC X(01) VALUE SPACES.
+  42         77 ST-ERRO      PIC X(02) VALUE "00".
+  43         77 W-ACT        PIC 9(02) VALUE ZEROS.
+  44         77 MENS         PIC X(50) VALUE SPACES.
+  45         77 LIMPA        PIC X(50) VALUE SPACES.
+  46        *-----------------------------------------------------------------
+  47         PROCEDURE DIVISION.
+  48         INICIO.
+  49        *
+  50         INC-OP0.
+  51             OPEN I-O PRODUTO
+  52             IF ST-ERRO NOT = "00"
+  53                 IF ST-ERRO = "30"
+  54                        OPEN OUTPUT PRODUTO
+  55                        CLOSE PRODUTO
+  56                        MOVE "*** ARQUIVO PRODUTO SENDO CRIADO **" TO MENS
+  57                        PERFORM ROT-MENS THRU ROT-MENS-FIM
+
+ CEP001.COB                              Thu Jan 26 18:43:34 2017    Page   2
+ line number source line   Microsoft COBOL                       Version 2.20
+
+  58                        GO TO INC-OP0
+  59                     ELSE
+  60                        MOVE "ERRO NA ABERTURA DO ARQUIVO PRODTUO" TO MENS
+  61                        PERFORM ROT-MENS THRU ROT-MENS-FIM
+  62                        GO TO ROT-FIM
+  63                  ELSE
+  64                      NEXT SENTENCE.
+  65         INC-001.
+  66                  MOVE ZEROS  TO CODPRO QUANT PRECMD VRESTOQ
+  67                  MOVE SPACES TO DESCR UNID.
+  68                  DISPLAY (01, 01) ERASE.
+  69                  DISPLAY (01, 20) "CADASTRO DE PRODUTO"
+  70                  DISPLAY (04, 01) "CODIGO             : "
+  71                  DISPLAY (05, 01) "DESCRICAO          : "
+  72                  DISPLAY (06, 01) "UNIDADE            : "
+  73                  DISPLAY (07, 01) "QUANTIDADE         : "
+  74                  DISPLAY (08, 01) "PRECO MEDIA        : "
+  75                  DISPLAY (09, 01) "VALOR ESTOQUE      : "
+  76                  DISPLAY (10, 01) "NOME DO FUNCIONARIO: ".
+  77         INC-002.
+  78                  ACCEPT  (04, 12) CODPRO
+  79                  ACCEPT W-ACT FROM ESCAPE KEY
+  80                   IF W-ACT = 02
+  81                     CLOSE PRODUTO
+  82                     GO TO ROT-FIM.
+  83                  IF CODPRO  = 0
+  84                     MOVE "*** PRODUTO INVALIDO ***" TO MENS
+  85                     PERFORM ROT-MENS THRU ROT-MENS-FIM
+  86                     GO TO INC-002.
+  87         LER-PRODUTO01.
+  88                  MOVE 0 TO W-SEL
+  89                  READ PRODUTO
+  90                  IF ST-ERRO NOT = "23"
+  91                     IF ST-ERRO = "00"
+  92                        DISPLAY (05, 12) DESCR
+  93                        DISPLAY (06, 12) UNID
+  94                        DISPLAY (07, 12) QUANT
+  95                        DISPLAY (08, 12) PRECMD
+  96                        DISPLAY (09, 12) VRESTOQ
+  97                        DISPLAY (10, 12) FUNCIONARIO
+  98                        MOVE "*** PRODUTO JA CADASTRAD0 ***" TO MENS
+  99                        PERFORM ROT-MENS THRU ROT-MENS-FIM
+ 100                        MOVE 1 TO W-SEL
+ 101                        GO TO ACE-001
+ 102                     ELSE
+ 103                        MOVE "ERRO NA LEITURA ARQUIVO PRODUTO"   TO MENS
+ 104                        PERFORM ROT-MENS THRU ROT-MENS-FIM
+ 105                        GO TO ROT-FIM
+ 106                  ELSE
+ 107                     NEXT SENTENCE.
+ 108         INC-003.
+ 109                  ACCEPT (05, 12) DESCR
+ 110                  ACCEPT W-ACT FROM ESCAPE KEY
+ 111                  IF W-ACT = 02 GO TO INC-002.
+ 112         INC-004.
+ 113                  ACCEPT (06, 12) UNID
+ 114                  ACCEPT W-ACT FROM ESCAPE KEY
+
+ CEP001.COB                              Thu Jan 26 18:43:34 2017    Page   3
+ line number source line   Microsoft COBOL                       Version 2.20
+
+ 115                  IF W-ACT = 02 GO TO INC-003.
+ 116         INC-005.
+ 117                  ACCEPT (07, 12) QUANT
+ 118                  ACCEPT W-ACT FROM ESCAPE KEY
+ 119                  IF W-ACT = 02 GO TO INC-004.
+ 120         INC-006.
+ 121                  ACCEPT (08, 12) PRECMD
+ 122                  ACCEPT W-ACT FROM ESCAPE KEY
+ 123                  IF W-ACT = 02 GO TO INC-005.
+ 124         INC-007.
+ 125                  COMPUTE VRESTOQ = QUANT * PRECMD
+ 126                  DISPLAY (09, 12)VRESTOQ.
+ 127         INC-008.
+ 128                  ACCEPT (10, 12) FUNCIONARIO
+ 129                  ACCEPT W-ACT FROM ESCAPE KEY
+ 130                  IF W-ACT= 02 GO TO INC-006.
+ 131        *
+ 132                  IF W-SEL = 1
+ 133                                GO TO ALT-OPC.
+ 134    
+ 135         INC-OPC.
+ 136                  MOVE "S" TO W-OPCAO
+ 137                  DISPLAY (23, 40) "DADOS OK (S/N) : ".
+ 138                  ACCEPT (23, 57) W-OPCAO WITH UPDATE
+ 139                  ACCEPT W-ACT FROM ESCAPE KEY
+ 140                  IF W-ACT = 02 GO TO INC-005.
+ 141                  IF W-OPCAO = "N" OR "n"
+ 142                     MOVE "*** DADOS RECUSADOS PELO OPERADOR ***" TO MENS
+ 143                     PERFORM ROT-MENS THRU ROT-MENS-FIM
+ 144                     GO TO INC-001.
+ 145                  IF W-OPCAO NOT = "S" AND "s"
+ 146                     MOVE "*** DIGITE APENAS S=SIM e N=NAO ***" TO MENS
+ 147                     PERFORM ROT-MENS THRU ROT-MENS-FIM
+ 148                     GO TO INC-OPC.
+ 149         INC-WR1.
+ 150                  WRITE REGPRO
+ 151                  IF ST-ERRO = "00" OR "02"
+ 152                        MOVE "*** DADOS GRAVADOS *** " TO MENS
+ 153                        PERFORM ROT-MENS THRU ROT-MENS-FIM
+ 154                        GO TO INC-001.
+ 155                  IF ST-ERRO = "22"
+ 156                        MOVE "*** PRODUTO JA EXISTE ***       " TO MENS
+ 157                        PERFORM ROT-MENS THRU ROT-MENS-FIM
+ 158                        GO TO INC-001
+ 159                  ELSE
+ 160                        MOVE "ERRO NA GRAVACAO DO ARQUIVO DE PRODUTO"
+ 161                                                         TO MENS
+ 162                        PERFORM ROT-MENS THRU ROT-MENS-FIM
+ 163                        GO TO ROT-FIM.
+ 164        *
+ 165        *****************************************
+ 166        * ROTINA DE CONSULTA/ALTERACAO/EXCLUSAO *
+ 167        *****************************************
+ 168        *
+ 169         ACE-001.
+ 170                  DISPLAY (23, 12)
+ 171                       "F1=NOVO REGISTRO   F2=ALTERAR   F3=EXCLUIR"
+
+ CEP001.COB                              Thu Jan 26 18:43:34 2017    Page   4
+ line number source line   Microsoft COBOL                       Version 2.20
+
+ 172                  ACCEPT (23, 55) W-OPCAO
+ 173                  ACCEPT W-ACT FROM ESCAPE KEY
+ 174                  IF W-ACT NOT = 02 AND W-ACT NOT = 03 AND W-ACT NOT = 04
+ 175                     GO TO ACE-001.
+ 176                  MOVE SPACES TO MENS
+ 177                  DISPLAY (23, 12) MENS
+ 178                  IF W-ACT = 02
+ 179                     MOVE 02 TO W-SEL
+ 180                     GO TO INC-001.
+ 181                  IF W-ACT = 03
+ 182                     GO TO INC-003.
+ 183        *
+ 184         EXC-OPC.
+ 185                  DISPLAY (23, 40) "EXCLUIR   (S/N) : ".
+ 186                  ACCEPT (23, 57) W-OPCAO
+ 187                  IF W-OPCAO = "N" OR "n"
+ 188                     MOVE "*** REGISTRO NAO EXCLUIDO ***" TO MENS
+ 189                     PERFORM ROT-MENS THRU ROT-MENS-FIM
+ 190                     GO TO INC-001.
+ 191                  IF W-OPCAO NOT = "S" AND "s"
+ 192                     MOVE "*** DIGITE APENAS S=SIM  e  N=NAO ***" TO MENS
+ 193                     PERFORM ROT-MENS THRU ROT-MENS-FIM
+ 194                     GO TO EXC-OPC.
+ 195         EXC-DL1.
+ 196                  DELETE PRODUTO RECORD
+ 197                  IF ST-ERRO = "00"
+ 198                     MOVE "*** REGISTRO EXCLUIDO ***           " TO MENS
+ 199                     PERFORM ROT-MENS THRU ROT-MENS-FIM
+ 200                     GO TO INC-001.
+ 201                  MOVE "ERRO NA EXCLUSAO DO REGISTRO "   TO MENS
+ 202                  PERFORM ROT-MENS THRU ROT-MENS-FIM
+ 203                  GO TO ROT-FIM.
+ 204        *
+ 205         ALT-OPC.
+ 206                  DISPLAY (23, 40) "ALTERAR  (S/N) : ".
+ 207                  ACCEPT (23, 57) W-OPCAO
+ 208                  ACCEPT W-ACT FROM ESCAPE KEY
+ 209                  IF W-ACT = 02 GO TO INC-005.
+ 210                  IF W-OPCAO = "N" OR "n"
+ 211                     MOVE "*** INFORMACOES NAO ALTERADAS *** " TO MENS
+ 212                     PERFORM ROT-MENS THRU ROT-MENS-FIM
+ 213                     GO TO INC-001.
+ 214                  IF W-OPCAO NOT = "S" AND "s"
+ 215                     MOVE "*** DIGITE APENAS S=SIM  e  N=NAO ***" TO MENS
+ 216                     PERFORM ROT-MENS THRU ROT-MENS-FIM
+ 217                     GO TO ALT-OPC.
+ 218         ALT-RW1.
+ 219                  REWRITE REGPRO
+ 220                  IF ST-ERRO = "00" OR "02"
+ 221                     MOVE "*** REGISTRO ALTERADO ***         " TO MENS
+ 222                     PERFORM ROT-MENS THRU ROT-MENS-FIM
+ 223                     GO TO INC-001.
+ 224                  MOVE "ERRO NA EXCLUSAO DO REGISTRO PRODUTO"   TO MENS
+ 225                  PERFORM ROT-MENS THRU ROT-MENS-FIM
+ 226                  GO TO ROT-FIM.
+ 227        *
+ 228        **********************
+
+ CEP001.COB                              Thu Jan 26 18:43:34 2017    Page   5
+ line number source line   Microsoft COBOL                       Version 2.20
+
+ 229        * ROTINA DE FIM      *
+ 230        **********************
+ 231        *
+ 232         ROT-FIM.
+ 233                  DISPLAY (01, 01) ERASE
+ 234                  EXIT PROGRAM.
+ 235         ROT-FIMP.
+ 236                  EXIT PROGRAM.
+ 237    
+ 238         ROT-FIMS.
+ 239                  STOP RUN.
+ 240        *
+ 241        **********************
+ 242        * ROTINA DE MENSAGEM *
+ 243        **********************
+ 244        *
+ 245         ROT-MENS.
+ 246                  MOVE ZEROS TO W-CONT.
+ 247         ROT-MENS1.
+ 248                 DISPLAY (23, 12) MENS.
+ 249         ROT-MENS2.
+ 250                  ADD 1 TO W-CONT
+ 251                  IF W-CONT < 3000
+ 252                     GO TO ROT-MENS2
+ 253                  ELSE
+ 254                     DISPLAY (23, 12) LIMPA.
+ 255         ROT-MENS-FIM.
+ 256                  EXIT.
+ 257         FIM-DE-PROGRAMA.
+
+   No errors or warnings
+
+   Data area size =  1812
+   Code area size =  1960
+

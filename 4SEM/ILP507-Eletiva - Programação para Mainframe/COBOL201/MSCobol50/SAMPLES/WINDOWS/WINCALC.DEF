@@ -1,0 +1,11 @@
+NAME            WinCalc
+DESCRIPTION     'Windows RPN Calculator.'
+EXETYPE         WINDOWS 3.0
+STUB            'WINSTUB.EXE'
+CODE            PRELOAD FIXED
+DATA            PRELOAD FIXED MULTIPLE
+STACKSIZE       16384
+HEAPSIZE        1024
+EXPORTS         MWndProc
+                BWndProc
+                DlgProc

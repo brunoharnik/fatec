@@ -1,0 +1,133 @@
+#include    "windows.h"
+
+#define     WM_ABOUT    0x400d
+#define     WM_CUSTOM   0x400e
+#define     WM_EXIT     0x400f
+#define     WM_0        0x4012
+#define     WM_1        0x4013
+#define     WM_2        0x4014
+#define     WM_3        0x4015
+#define     WM_4        0x4016
+#define     WM_5        0x4017
+#define     WM_6        0x4018
+#define     WM_7        0x4019
+#define     WM_8        0x401a
+#define     WM_9        0x401b
+#define     WM_A        0x401c
+#define     WM_B        0x401d
+#define     WM_C        0x401e
+#define     WM_D        0x401f
+#define     WM_E        0x4020
+#define     WM_F        0x4021
+#define     WM_DP       0x4022
+#define     WM_CHS      0x4023
+#define     WM_PLUS     0x4024
+#define     WM_MINUS    0x4025
+#define     WM_MULTIPLY 0x4026
+#define     WM_DIVIDE   0x4027
+#define     WM_ENTER    0x4028
+#define     WM_ROLLDOWN 0x4029
+#define     WM_ROLLUP   0x402a
+#define     WM_CLR      0x402b
+#define     WM_CLX      0x402c
+#define     WM_HEX      0x402d
+#define     WM_DEC      0x402e
+#define     WM_OCT      0x402f
+#define     WM_BIN      0x4030
+#define     WM_YPOWERX  0x4031
+#define     WM_RECIP    0x4032
+#define     WM_XCHG     0x4033
+
+#define     WM_BASE     0x4100
+#define     WM_FUNCTION 0x4101
+#define     WM_REGISTER 0x4102
+#define     WM_X        0x4103
+#define     WM_H        0x4104
+
+
+CalcIcon       ICON        wincalc.ico
+CalcCursor     CURSOR      wincalc.cur
+
+CalcMenuMenu   MENU        PRELOAD
+  BEGIN
+    POPUP           "&Base"
+    BEGIN
+        MENUITEM    "&Hexadecimal\tF3"          ,WM_HEX
+        MENUITEM    "&Decimal\tHome"            ,WM_DEC
+        MENUITEM    "&Octal\tF8"                ,WM_OCT
+        MENUITEM    "&Binary\tF2"               ,WM_BIN
+	MENUITEM    SEPARATOR
+        MENUITEM    "&Custom...\tAlt+R"         ,WM_CUSTOM
+    END
+    POPUP           "&Function"
+    BEGIN
+        MENUITEM    "&Add\t+"                   ,WM_PLUS
+        MENUITEM    "&Subtract\t-"              ,WM_MINUS
+        MENUITEM    "&Multiply\t*"              ,WM_MULTIPLY
+        MENUITEM    "&Divide\t/"                ,WM_DIVIDE
+        MENUITEM    "&Power\tF5"                ,WM_YPOWERX
+        MENUITEM    "&Reciprocal\tF6"           ,WM_RECIP
+    END
+    POPUP           "&Register"
+    BEGIN
+        MENUITEM    "&Clear\tEnd"               ,WM_CLR
+        MENUITEM    "Clear &X\tDelete"          ,WM_CLX
+	MENUITEM    SEPARATOR
+        MENUITEM    "Roll &Down\tPage Down"    ,WM_ROLLDOWN
+        MENUITEM    "Roll &Up\tPage Up"        ,WM_ROLLUP
+	MENUITEM    SEPARATOR
+        MENUITEM    "&Exchange X,Y\tF7"         ,WM_XCHG
+        MENUITEM    "Change &Sign\tInsert"      ,WM_CHS
+    END
+    POPUP           "E&xit"
+    BEGIN
+        MENUITEM    "E&xit Calculator"          ,WM_EXIT
+        MENUITEM    "&Continue"                 ,0
+    END
+    POPUP           "&Help"
+    BEGIN
+        MENUITEM    "&General\tF1"              ,WM_ABOUT
+    END
+  END
+
+CalcAccel   ACCELERATORS      PRELOAD
+BEGIN
+    "0"	    ,WM_0
+    "1"	    ,WM_1
+    "2"	    ,WM_2
+    "3"	    ,WM_3
+    "4"	    ,WM_4
+    "5"	    ,WM_5
+    "6"	    ,WM_6
+    "7"	    ,WM_7
+    "8"	    ,WM_8
+    "9"	    ,WM_9
+    "A"     ,WM_A       ,VIRTKEY   ,CONTROL
+    "B"     ,WM_B       ,VIRTKEY   ,CONTROL
+    "C"     ,WM_C       ,VIRTKEY   ,CONTROL
+    "D"     ,WM_D       ,VIRTKEY   ,CONTROL
+    "E"     ,WM_E       ,VIRTKEY   ,CONTROL
+    "F"     ,WM_F       ,VIRTKEY   ,CONTROL
+    "."	    ,WM_DP
+VK_INSERT   ,WM_CHS     ,VIRTKEY
+    "+"	    ,WM_PLUS
+    "-"	    ,WM_MINUS
+    "*"	    ,WM_MULTIPLY
+    "/"	    ,WM_DIVIDE
+VK_RETURN   ,WM_ENTER   ,VIRTKEY
+VK_NEXT     ,WM_ROLLDOWN,VIRTKEY
+VK_PRIOR    ,WM_ROLLUP  ,VIRTKEY
+VK_END      ,WM_CLR     ,VIRTKEY
+VK_DELETE   ,WM_CLX     ,VIRTKEY
+VK_F3       ,WM_HEX     ,VIRTKEY
+VK_HOME     ,WM_DEC     ,VIRTKEY
+VK_F8       ,WM_OCT     ,VIRTKEY
+VK_F10      ,WM_BIN     ,VIRTKEY
+VK_F5       ,WM_YPOWERX ,VIRTKEY
+VK_F6       ,WM_RECIP   ,VIRTKEY
+VK_F7       ,WM_XCHG    ,VIRTKEY
+    "r"	    ,WM_CUSTOM	,ALT
+VK_F1       ,WM_ABOUT   ,VIRTKEY
+END
+
+rcinclude wincalc.dlg
