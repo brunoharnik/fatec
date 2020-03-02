@@ -5,26 +5,23 @@
       * Tectonics: cobc
       **********************
        IDENTIFICATION DIVISION.
-
-       
        PROGRAM-ID. AMIGO.
        ENVIRONMENT DIVISION.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
        SELECT IN-FILE ASSIGN TO DISK
+           FILE STATUS IS ARQUIVO-STATUS
            ORGANIZATION IS LINE SEQUENTIAL
            ACCESS MODE SEQUENTIAL.
        DATA DIVISION.
        FILE SECTION.
        FD  IN-FILE
-           LABEL RECORD STANDARD
-           DATA RECORD IS INPUT-REC
-           VALUE OF FILE-ID IS "C:\AMIGOARQUIVO.TXT".
+           LABEL RECORDS ARE STANDARD
+           VALUE OF FILE-ID IS "C:\AMIGO.TXT"
+           DATA RECORD IS INPUT-REC.
        01  INPUT-REC.
-           05 AMIGO-NOME               PIC A(20).
-           05 AMIGO-SOBRENOME          PIC A(40).
-           05 AMIGO-APELIDO            PIC X(20).
-           05 AMIGO-NASCIMENTO         PIC 9(08).
+           05 AMIGO-NOME               PIC X(10).
+           05 AMIGO-SOBRENOME          PIC X(10).
 
        WORKING-STORAGE SECTION.
        
@@ -32,8 +29,10 @@
            05 EOF-SWITCH               PIC X VALUE "N".
        01 COUNTERS.
            05 REC-COUNTER              PIC 9(3) VALUE 0.
+       
+       01 ARQUIVO-STATUS               PIC X(2).
 
-       77 WS-MENU-OP PIC X.
+       01 WS-MENU-OP                   PIC X.
        
        PROCEDURE DIVISION.
        000-MAIN.
@@ -90,6 +89,10 @@
            GO TO 000-MAIN.
 
        300-INIT.
-           OPEN INPUT IN-FILE.
-           READ IN-FILE AT END DISPLAY "A leitura do arquivo rolou.".
+           OPEN I-O IN-FILE.
+           DISPLAY "CODIGO DE RETORNO DO ARQUIVO: " ARQUIVO-STATUS.
+           DISPLAY " ".                                     
+               READ IN-FILE                                               
+               MOVE "S" TO EOF-SWITCH.                           
+               DISPLAY 'O QUE FOI LIDO : ' INPUT-REC                                     
            CLOSE IN-FILE.
