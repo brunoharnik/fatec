@@ -1,0 +1,71 @@
+
+ SAMPLE.COB                              Tue Jun 29 11:05:08 2004    Page   1
+ line number source line   Microsoft COBOL                       Version 2.20
+
+   1         IDENTIFICATION DIVISION.
+   2         PROGRAM-ID. SAMPLE.
+   3         ENVIRONMENT DIVISION.
+   4         INPUT-OUTPUT SECTION.
+   5         FILE-CONTROL.
+   6             SELECT IN-EMPLOYEE-FILE ASSIGN TO DISK
+   7             ORGANIZATION IS LINE SEQUENTIAL.
+   8             SELECT OUT-SALARY-FILE ASSIGN TO DISK
+   9             ORGANIZATION IS LINE SEQUENTIAL.
+  10         DATA DIVISION.
+  11         FILE SECTION.
+  12         FD IN-EMPLOYEE-FILE
+  13             LABEL RECORDS ARE STANDARD
+  14             RECORD CONTAINS 80 CHARACTERS
+  15             VALUE OF FILE-ID IS "SAMPLE.DAT"
+  16             DATA RECORD IS IN-EMPLOYEE-REC.
+  17             01 IN-EMPLOYEE-REC.
+  18                  05 IN-EMPLOYEE-NAME PIC X(20).
+  19                  05 IN-EMPLOYEE-SALARY PIC 9(5).
+  20                  05 IN-BDAY.
+  21                          10 MM PIC 99.
+  22                          10 DD PIC 99.
+  23                          10 YY PIC 99.
+  24         FD OUT-SALARY-FILE
+  25             LABEL RECORDS ARE STANDARD
+  26             RECORD CONTAINS 80 CHARACTERS
+  27             VALUE OF FILE-ID IS "OUT.DAT"
+  28             DATA RECORD IS OUT-SALARY-REC.
+  29             01 OUT-SALARY-REC.
+  30                  05 OUT-EMPLOYEE-NAME PIC X(20).
+  31                  05 OUT-SALARY PIC 9(5).
+  32    
+  33         WORKING-STORAGE SECTION.
+  34             01 WS-WORK-AREAS.
+  35                  05 MORE-RECORDS PIC X(3) VALUE 'YES'.
+  36    
+  37         PROCEDURE DIVISION.
+  38         100-MAIN-MODULE.
+  39             OPEN INPUT IN-EMPLOYEE-FILE
+  40                  OUTPUT OUT-SALARY-FILE.
+  41             READ IN-EMPLOYEE-FILE
+  42                  AT END MOVE 'NO' TO MORE-RECORDS.
+  43             PERFORM 200-CALC-RTN
+  44                  UNTIL MORE-RECORDS = 'NO'.
+  45             CLOSE IN-EMPLOYEE-FILE
+  46                  OUT-SALARY-FILE.
+  47             STOP RUN.
+  48    
+  49         200-CALC-RTN.
+  50              MOVE SPACES TO OUT-SALARY-REC.
+  51              MOVE IN-EMPLOYEE-NAME TO OUT-EMPLOYEE-NAME.
+  52              MOVE IN-EMPLOYEE-SALARY TO OUT-SALARY.
+  53              WRITE OUT-SALARY-REC.
+  54              READ IN-EMPLOYEE-FILE
+  55                  AT END MOVE 'NO' TO MORE-RECORDS.
+  56    
+  57    
+
+ SAMPLE.COB                              Tue Jun 29 11:05:08 2004    Page   2
+ line number source line   Microsoft COBOL                       Version 2.20
+
+
+   No errors or warnings
+
+   Data area size =   486
+   Code area size =   180
+
