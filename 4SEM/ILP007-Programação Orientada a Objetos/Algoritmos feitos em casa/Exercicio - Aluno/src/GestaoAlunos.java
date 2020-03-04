@@ -8,6 +8,7 @@ public class GestaoAlunos {
 	
 	int indice;
 	Aluno[] alunos = new Aluno[50];
+	private Scanner scan;
 	
 	void criar() {
 		alunos[indice] = new Aluno();
@@ -15,7 +16,7 @@ public class GestaoAlunos {
 		alunos[indice].id = new Random().nextLong();
 		
 		System.out.println("Digite o nome do aluno: ");
-		Scanner scan = new Scanner(System.in);
+		scan = new Scanner(System.in);
 		String entrada = scan.nextLine();
 		alunos[indice].nome = entrada;
 		
@@ -33,17 +34,39 @@ public class GestaoAlunos {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		
 		indice++;
 	}
 
 	void atualizar() {
-		
+		System.out.println("Digite o RA que deve ser atualizado: ");
+		scan = new Scanner(System.in);
+		String entrada = scan.nextLine();
+		for (int i = 0; i < alunos.length; i++) {
+			if (alunos[i] != null && entrada.equals(alunos[i].ra)) {
+				System.out.println("Digite o nome do aluno: ");
+				scan = new Scanner(System.in);
+				entrada = scan.nextLine();
+				alunos[i].nome = entrada;
+				
+				System.out.println("Digite a data de nascimento: dd/MM/yyyy");
+				scan = new Scanner(System.in);
+				entrada = scan.nextLine();
+				try {
+					Date dn = new SimpleDateFormat("dd/MM/yyyy").parse(entrada);
+					alunos[i].nascimento = dn;
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				System.out.println("RA atualizado com sucesso!");
+				return;
+			}
+		}
+		System.out.println("O RA digitado não existe.");
 	}
 	
 	void excluir() {
 		System.out.println("Digite o RA que deve ser excluido: ");
-		Scanner scan = new Scanner(System.in);
+		scan = new Scanner(System.in);
 		String entrada = scan.nextLine();
 		for (int i = 0; i < alunos.length; i++) {
 			if (alunos[i] != null && entrada.equals(alunos[i].ra)) {
@@ -53,6 +76,7 @@ public class GestaoAlunos {
 					i++;
 				}
 				System.out.println("RA excluido com sucesso!");
+				indice--;
 				return;
 			}
 		}
@@ -61,7 +85,7 @@ public class GestaoAlunos {
 	
 	void exibir() {
 		System.out.println("Digite o RA que você deseja exibir os dados: ");
-		Scanner scan = new Scanner(System.in);
+		scan = new Scanner(System.in);
 		String entrada = scan.nextLine();
 		for (int i = 0; i < alunos.length; i++) {
 			if (alunos[i] != null && entrada.equals(alunos[i].ra)) {
@@ -81,8 +105,7 @@ public class GestaoAlunos {
 							  +"\n(R)emover"
 							  +"\n(A)tualizar"
 							  +"\n(S)air");
-			
-			Scanner scan = new Scanner(System.in);
+			scan = new Scanner(System.in);
 			String textoMaiusculo = scan.nextLine().toUpperCase();
 			char letra = textoMaiusculo.charAt(0);
 			
@@ -110,8 +133,21 @@ public class GestaoAlunos {
 	}
 	
 	public static void main(String[] args) {
-		
 		GestaoAlunos g = new GestaoAlunos();
 		g.menu();
+	}
+	
+	public class Aluno {
+		long id;
+		String nome;
+		String ra;
+		Date nascimento;
+		
+		void exibir() {
+			System.out.println("Id: " + id
+							  +"\nNome: " + nome
+							  +"\nR.A.: " + ra
+							  +"\nNascimento: " + nascimento);
+		}
 	}
 }
