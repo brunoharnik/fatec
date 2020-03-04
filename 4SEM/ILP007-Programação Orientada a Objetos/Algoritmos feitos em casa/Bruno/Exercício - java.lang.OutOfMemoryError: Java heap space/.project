@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Estouro de memória heap</name>
+	<name>Exercício - java.lang.OutOfMemoryError: Java heap space</name>
 	<comment></comment>
 	<projects>
 	</projects>
