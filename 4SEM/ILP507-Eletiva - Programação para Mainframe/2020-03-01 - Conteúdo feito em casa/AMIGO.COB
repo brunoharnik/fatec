@@ -17,7 +17,8 @@
        FILE SECTION.
        FD  ARQUIVO
            LABEL RECORDS ARE STANDARD
-           VALUE OF FILE-ID IS "C:\AMIGO.TXT"
+           RECORD CONTAINS 72 CHARACTERS
+           VALUE OF FILE-ID IS "C:\AMIGO.DAT"
            DATA RECORD IS ENTRADA-GRAVA.
        01  ENTRADA-GRAVA.
            05 AMIGO-NOME               PIC X(20).
@@ -45,6 +46,18 @@
 
        01 CABECALHO-LEITURA PIC X(72) VALUE
        "NOME                SOBRENOME           APELIDO   NASC.   CEL.".
+
+       01  WS-AMIGO.
+           05 WS-AMIGO-NOME               PIC X(20).
+           05 WS-AMIGO-SOBRENOME          PIC X(20).
+           05 WS-AMIGO-APELIDO            PIC X(10).
+           05 WS-AMIGO-NASC.
+               10  WS-NASC-DIA            PIC 9(02).
+               10  WS-NASC-MES            PIC 9(02).
+               10  WS-NASC-ANO            PIC 9(04).
+           05 WS-AMIGO-CELULAR            PIC X(14).
+
+           05 WS-NASC-CONCAT              PIC X(08).
 
        SCREEN SECTION.
        01 SS-MAIN.
@@ -84,9 +97,61 @@
            FOREGROUND-COLOR 12 LINE 17 COLUMN 19.
            05. VALUE "Digite a opcao que voce deseja:          "
            FOREGROUND-COLOR 15 LINE 18 COLUMN 19.
-           05. MENU-INPUT FOREGROUND-COLOR 15 LINE 19 COLUMN 19
-                    PIC  X(1)     TO WS-MENU-OP.
+           05. MENU-INPUT             PIC X(1) TO WS-MENU-OP
+           FOREGROUND-COLOR 15 LINE 19 COLUMN 19.
        
+
+       01 SS-CADASTRO.
+           05. VALUE "                                         "
+               BLANK SCREEN    LINE 1 COLUMN 19.
+           05. VALUE "-----------------------------------------"
+           FOREGROUND-COLOR 11 LINE 2 COLUMN 19.
+           05. VALUE "|          Cadastro de amigo            |"
+           FOREGROUND-COLOR 11 LINE 3 COLUMN 19.
+           05. VALUE "-----------------------------------------"
+           FOREGROUND-COLOR 11 LINE 4 COLUMN 19.
+           05. VALUE " "
+           LINE 5 COLUMN 19.
+
+           05. VALUE "               Nome: "
+           FOREGROUND-COLOR 11 LINE 6 COLUMN 19.
+           05. CADASTRO-NOME      PIC X(20) TO WS-AMIGO-NOME
+           FOREGROUND-COLOR 15 BACKGROUND-COLOR 09    LINE 6 COLUMN 40.
+           05. VALUE "ex. Joao"
+           FOREGROUND-COLOR 03 LINE 7 COLUMN 40.
+
+           05. VALUE "          Sobrenome: "
+           FOREGROUND-COLOR 11 LINE 8 COLUMN 19.
+           05. CADASTRO-NOME      PIC X(20) TO WS-AMIGO-SOBRENOME
+           FOREGROUND-COLOR 15 BACKGROUND-COLOR 09    LINE 8 COLUMN 40.
+           05. VALUE "ex. da Silva"
+           FOREGROUND-COLOR 03 LINE 9 COLUMN 40.
+
+           05. VALUE "            Apelido: "
+           FOREGROUND-COLOR 11 LINE 10 COLUMN 19.
+           05. CADASTRO-NOME      PIC X(10) TO WS-AMIGO-APELIDO
+           FOREGROUND-COLOR 15 BACKGROUND-COLOR 09    LINE 10 COLUMN 40.
+           05. VALUE "ex. Jao"
+           FOREGROUND-COLOR 03 LINE 11 COLUMN 40.
+
+           05. VALUE " Data de nascimento: "
+           FOREGROUND-COLOR 11 LINE 12 COLUMN 19.
+           05. CADASTRO-DIA      PIC X(02) TO WS-NASC-DIA
+           FOREGROUND-COLOR 15 BACKGROUND-COLOR 09    LINE 12 COLUMN 40.
+           05. CADASTRO-MES      PIC X(02) TO WS-NASC-MES
+           FOREGROUND-COLOR 15 BACKGROUND-COLOR 09    LINE 12 COLUMN 43.
+           05. CADASTRO-ANO      PIC X(04) TO WS-NASC-ANO
+           FOREGROUND-COLOR 15 BACKGROUND-COLOR 09    LINE 12 COLUMN 46.
+           05. VALUE "DD MM AAAA"
+           FOREGROUND-COLOR 03 LINE 13 COLUMN 40.
+
+           05. VALUE "            Celular: "
+           FOREGROUND-COLOR 11 LINE 14 COLUMN 19.
+           05. CADASTRO-NOME      PIC X(14) TO WS-AMIGO-CELULAR
+           FOREGROUND-COLOR 15 BACKGROUND-COLOR 09    LINE 14 COLUMN 40.
+           05. VALUE "ex. +5511987654321"
+           FOREGROUND-COLOR 03 LINE 15 COLUMN 40.
+           
        01 SS-FIM.
            05. BLANK SCREEN.
            05. VALUE "             #########       #                  "
@@ -133,9 +198,13 @@
             FOREGROUND-COLOR 15 LINE 21 COLUMN 18.
            05. VALUE " "
             LINE 22 COLUMN 18.
-
+       
        PROCEDURE DIVISION.
-       000-MAIN.
+       000-INICIO.
+           OPEN EXTEND ARQUIVO.
+           CLOSE ARQUIVO.
+
+       100-MAIN.
            DISPLAY SS-MAIN
            ACCEPT SS-MAIN
            IF WS-MENU-OP = 1
@@ -149,9 +218,9 @@
            DISPLAY "Opcao invalida!"
            DISPLAY "Pressione ENTER para prosseguir."
            ACCEPT PROSSEGUIR
-           GO TO 000-MAIN.
+           GO TO 100-MAIN.
        
-       100-ABRE-ARQUIVO.
+       200-ABRE-ARQUIVO.
            OPEN I-O ARQUIVO.
            DISPLAY "STATUS DO ACESSO: " ARQUIVO-STATUS.
            IF ARQUIVO-STATUS = "00"
@@ -162,11 +231,11 @@
                DISPLAY "do Cobol na parte de File Status."
                DISPLAY " ".
        
-       200-FECHA-ARQUIVO.
+       300-FECHA-ARQUIVO.
            CLOSE ARQUIVO.
-           COMPUTE CONTADOR-ARQUIVO = 0.
-       
-       300-LEITURA.
+           MOVE "N" TO CHAVE-EOF.
+           
+       400-LEITURA.
            READ ARQUIVO AT END MOVE "S" TO CHAVE-EOF.
            COMPUTE CONTADOR-ARQUIVO = CONTADOR-ARQUIVO + 1.
 
@@ -178,29 +247,49 @@
                ACCEPT PROSSEGUIR.
 
            DISPLAY ENTRADA-GRAVA.
-
-       400-GRAVACAO.
-           DISPLAY "AINDA NAO FIZ NADA AQUI.".
        
        500-EXIBIR-LISTA.
+           PERFORM 000-INICIO.
            DISPLAY "-------------------------------------------" 
            DISPLAY "Realizando a leitura sequencial do arquivo:"
            DISPLAY "-------------------------------------------"
-           PERFORM 100-ABRE-ARQUIVO.
+           COMPUTE CONTADOR-ARQUIVO = 0.
+           PERFORM 200-ABRE-ARQUIVO.
            DISPLAY CABECALHO-LEITURA.
-           PERFORM 300-LEITURA UNTIL CHAVE-EOF-SIM
-           MOVE "N" TO CHAVE-EOF.
-           DISPLAY "Total de registros: " CONTADOR-ARQUIVO.
-           PERFORM 200-FECHA-ARQUIVO.
-           DISPLAY "Pressione ENTER para prosseguir."
+           PERFORM 400-LEITURA UNTIL CHAVE-EOF-SIM
+
+           COMPUTE CONTADOR-ARQUIVO = CONTADOR-ARQUIVO - 1;
+           DISPLAY "Total de registros: " CONTADOR-ARQUIVO
+                               " - Pressione ENTER para prosseguir.".
+           PERFORM 300-FECHA-ARQUIVO.
            ACCEPT PROSSEGUIR
-           GO TO 000-MAIN.
+           GO TO 100-MAIN.
 
        600-CADASTRAR-AMIGO.
-           DISPLAY "GRAVAR"
+           DISPLAY SS-CADASTRO
+           ACCEPT SS-CADASTRO
+           
+           MOVE WS-AMIGO-NOME TO AMIGO-NOME
+           MOVE WS-AMIGO-SOBRENOME TO AMIGO-SOBRENOME
+           MOVE WS-AMIGO-APELIDO TO AMIGO-APELIDO
+           STRING WS-NASC-ANO DELIMITED BY SIZE
+                  WS-NASC-MES DELIMITED BY SIZE
+                  WS-NASC-DIA DELIMITED BY SIZE
+                  INTO WS-NASC-CONCAT.
+           MOVE WS-NASC-CONCAT TO AMIGO-NASC
+           MOVE WS-AMIGO-CELULAR TO AMIGO-CELULAR
+           
+           OPEN EXTEND ARQUIVO WRITE ENTRADA-GRAVA.
+           CLOSE ARQUIVO.
+           DISPLAY " "
+           DISPLAY " "
+           DISPLAY " "
+           DISPLAY "Registro gravado com sucesso:"
+           DISPLAY WS-AMIGO
            DISPLAY "Pressione ENTER para prosseguir."
            ACCEPT PROSSEGUIR
-           GO TO 000-MAIN.
+           GO TO 100-MAIN.
+
            
        900-FIM.
                DISPLAY SS-FIM.
