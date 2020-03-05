@@ -1,0 +1,3 @@
+INDEX VERSION 1.131+/home/wall-e/Área de trabalho/fatec/4SEM/ILP007-Programação Orientada a Objetos/Algoritmos feitos em casa/.metadata/.plugins/org.eclipse.jdt.core
+646308851.index
+4120811944.index
