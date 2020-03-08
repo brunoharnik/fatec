@@ -40,37 +40,98 @@
       *************************
        WORKING-STORAGE SECTION.  
        77 STATUS-ARQUIVO           PIC X(02).
-       77 MENSAGEM                 PIC X(50) VALUE SPACES.
+       77 MENSAGEM                 PIC X(48) VALUE SPACES.
        77 TEMPORIZADOR             PIC 9(06) VALUE ZEROS.
+       77 MENU-OPCAO               PIC X(01) VALUE SPACES.
+
 
        01 MASC1        PIC Z9,99.
 
        77 W-SEL        PIC 9(01) VALUE ZEROS.
-       77 W-OPCAO      PIC X(01) VALUE SPACES.
        77 W-ACT        PIC 9(02) VALUE ZEROS.
-       77 LIMPA        PIC X(50) VALUE SPACES.
        
       *********
       * Telas *
       *********
        SCREEN SECTION.
-       01 TELA-MENSAGENS.
-        05. BLANK SCREEN.
-        05. VALUE "****************************************************"
-           BACKGROUND-COLOR 12 FOREGROUND-COLOR 14 LINE 10 COLUMN 16.
-        05. VALUE "*                                                  *"
-           BACKGROUND-COLOR 12 FOREGROUND-COLOR 14 LINE 11 COLUMN 16.
-        05. VALUE "*"
-           BACKGROUND-COLOR 12 FOREGROUND-COLOR 14 LINE 12 COLUMN 16.
-        05. PIC X(50) FROM MENSAGEM
-           BACKGROUND-COLOR 12 FOREGROUND-COLOR 14 LINE 12 COLUMN 17.
-        05. VALUE "*"
-           BACKGROUND-COLOR 12 FOREGROUND-COLOR 14 LINE 12 COLUMN 67.
-        05. VALUE "*                                                  *"                                               
-           BACKGROUND-COLOR 12 FOREGROUND-COLOR 14 LINE 13 COLUMN 16.
-        05. VALUE "****************************************************"
-           BACKGROUND-COLOR 12 FOREGROUND-COLOR 14 LINE 14 COLUMN 16.
+       01 BLANK-SCREEN.
+           05. BLANK SCREEN.
 
+       01 TELA-MENSAGENS.
+        05. VALUE "**************************************************"
+           BACKGROUND-COLOR 04 FOREGROUND-COLOR 14 LINE 10 COLUMN 16.
+        05. VALUE "*                                                *"
+           BACKGROUND-COLOR 04 FOREGROUND-COLOR 14 LINE 11 COLUMN 16.
+        05. VALUE "*"
+           BACKGROUND-COLOR 04 FOREGROUND-COLOR 14 LINE 12 COLUMN 16.
+        05. PIC X(48) FROM MENSAGEM
+           BACKGROUND-COLOR 04 FOREGROUND-COLOR 14 LINE 12 COLUMN 17.
+        05. VALUE "*"
+           BACKGROUND-COLOR 04 FOREGROUND-COLOR 14 LINE 12 COLUMN 65.
+        05. VALUE "*                                                *"                                               
+           BACKGROUND-COLOR 04 FOREGROUND-COLOR 14 LINE 13 COLUMN 16.
+        05. VALUE "**************************************************"
+           BACKGROUND-COLOR 04 FOREGROUND-COLOR 14 LINE 14 COLUMN 16.
+
+       01 TELA-MENU-PRINCIPAL.
+        05. VALUE "**************************************************"
+           FOREGROUND-COLOR 12 LINE 02 COLUMN 16.
+        05. VALUE "*                                                *"
+           FOREGROUND-COLOR 12 LINE 03 COLUMN 16.
+        05. VALUE "*                Cadastro de notas               *"
+           FOREGROUND-COLOR 12 LINE 04 COLUMN 16.
+        05. VALUE "*                                                *"                                               
+           FOREGROUND-COLOR 12 LINE 05 COLUMN 16.
+        05. VALUE "**************************************************"
+           FOREGROUND-COLOR 12 LINE 06 COLUMN 16.
+        05. VALUE "C"
+           FOREGROUND-COLOR 14 LINE 08 COLUMN 16.
+        05. VALUE "adastrar um estudante e suas notas."
+           FOREGROUND-COLOR 15 LINE 08 COLUMN 17.
+        05. VALUE "L"
+           FOREGROUND-COLOR 14 LINE 10 COLUMN 16.
+        05. VALUE "ista completa de matriculas, estudantes e notas."
+           FOREGROUND-COLOR 15 LINE 10 COLUMN 17.
+        05. VALUE "A"
+           FOREGROUND-COLOR 14 LINE 12 COLUMN 16.
+        05. VALUE "tualizar os dados de um estudante."
+           FOREGROUND-COLOR 15 LINE 12 COLUMN 17.
+        05. VALUE "D"
+           FOREGROUND-COLOR 14 LINE 14 COLUMN 16.
+        05. VALUE "eletar um registro."
+           FOREGROUND-COLOR 15 LINE 14 COLUMN 17.
+        05. VALUE "E"
+           FOREGROUND-COLOR 14 LINE 16 COLUMN 16.
+        05. VALUE "statisticas."
+           FOREGROUND-COLOR 15 LINE 16 COLUMN 17.
+        05. VALUE "F"
+           FOREGROUND-COLOR 14 LINE 18 COLUMN 16.
+        05. VALUE "inalizar o programa."
+           FOREGROUND-COLOR 15 LINE 18 COLUMN 17.
+        05. VALUE "Digite a letra que corresponde"
+           FOREGROUND-COLOR 15 LINE 23 COLUMN 16.
+        05. VALUE "ao item desejado do menu:"
+           FOREGROUND-COLOR 15 LINE 24 COLUMN 16.
+        05. MENU-INPUT             PIC X(01) TO MENU-OPCAO
+           FOREGROUND-COLOR 14 LINE 24 COLUMN 41 AUTO.
+
+       01 TELA-CADASTRO.
+        05. VALUE "**************************************************"
+           FOREGROUND-COLOR 14 LINE 02 COLUMN 16.
+        05. VALUE "*                                                *"
+           FOREGROUND-COLOR 14 LINE 03 COLUMN 16.
+        05. VALUE "*          Cadastrar estudante e notas           *"
+           FOREGROUND-COLOR 14 LINE 04 COLUMN 16.
+        05. VALUE "*                                                *"                                               
+           FOREGROUND-COLOR 14 LINE 05 COLUMN 16.
+        05. VALUE "**************************************************"
+           FOREGROUND-COLOR 14 LINE 06 COLUMN 16.
+        05. MATRICULA-INPUT                PIC 9(06) TO MATRICULA
+           BACKGROUND-COLOR 04 FOREGROUND-COLOR 14 LINE 24 COLUMN 41.
+       
+      **************
+      * O Programa *
+      **************
        PROCEDURE DIVISION.
        INICIO.
 
@@ -79,13 +140,13 @@
            IF STATUS-ARQUIVO NOT = "00"
                IF STATUS-ARQUIVO = "30"
                OPEN OUTPUT ARQUIVO
-               MOVE "              Arquivo sendo criado..."
+               MOVE "            Arquivo sendo criado..."
                    TO MENSAGEM
                PERFORM MSG-ZERA THRU MSG-FIM
                CLOSE ARQUIVO
                GO TO 000-ABERTURA
                ELSE
-               MOVE "Erro na abertura do arquivo."
+               MOVE "         Erro na abertura do arquivo."
                    TO MENSAGEM
                PERFORM MSG-ZERA THRU MSG-FIM
                GO TO ROT-FIM.
@@ -94,31 +155,41 @@
            MOVE ZEROS  TO MATRICULA NOTA1 NOTA2 
            MOVE SPACES TO NOME.
 
+       002-MENU-PRINCIPAL.
+           DISPLAY TELA-MENU-PRINCIPAL
+           ACCEPT TELA-MENU-PRINCIPAL.
 
+
+      *************
+      * Cadastrar *
+      *************
+       100-CADASTRAR.
+           DISPLAY TELA-CADASTRO.
+           ACCEPT TELA-CADASTRO.
+           
       ************************
       * Rotinas de mensagens *
       ************************
        MSG-ZERA.
            MOVE ZEROS TO TEMPORIZADOR.
-       MSG-1.
+       MSG-DISPLAY.
+           DISPLAY BLANK-SCREEN.
            DISPLAY TELA-MENSAGENS.
-       MSG-2.
+       MSG-TEMPO.
            ADD 1 TO TEMPORIZADOR
            IF TEMPORIZADOR < 6000
-               GO TO MSG-2
+               GO TO MSG-TEMPO
            ELSE
-               DISPLAY (23, 12) LIMPA.
+               DISPLAY BLANK-SCREEN.
        MSG-FIM.
-                EXIT.
+           MOVE SPACES TO MENSAGEM
+           EXIT.
        
       **************************
       * Rotinas de finalização *
       **************************
        ROT-FIM.
-                DISPLAY (01, 01) ERASE
+                DISPLAY BLANK-SCREEN.
                 EXIT PROGRAM.
-       ROT-FIMP.
-                EXIT PROGRAM.
-
        ROT-FIMS.
                 STOP RUN.
