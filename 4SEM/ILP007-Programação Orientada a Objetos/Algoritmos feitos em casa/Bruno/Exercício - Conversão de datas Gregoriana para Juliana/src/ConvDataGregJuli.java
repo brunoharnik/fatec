@@ -46,28 +46,3 @@ public class ConvDataGregJuli {
 		return 0;
 	}
 }
-
-/*
- * Nosso calendário atual é Gregoriano.
- * 
- * Faça uma função que receba como argumento o dia, mês e ano do nosso
- * calendário gregoriano, e retorne o número do dia correspondente no calendário
- * Juliana
- * 
- * Fórmula :
- * 
- * data = dia + mes + ano base = 15 + 10 + 1582 se mês < 3 então: ano -= 1 mes
- * += 12
- * 
- * se data >= base então: a = ano / 100 b = a / 4 c = 2 - a + b d = 365.25 *
- * (ano + 4716) e = 30.6001 * mes + 1 dataju = (d + e + dia + 0.5 + c - 1524.5)
- * + 30 se dataju for numero inteiro então: dataju -= 1 resposta = parte inteira
- * de dataju
- * 
- * Para testar informe para a função a data de inicio das olimpíadas do Brasil
- * 05 de Agosto de 2016. O resultado deverá ser : 2457606
- * 
- * Algoritmo adaptado do site http://ghiorzi.org/diasjuli.htm agradecimentos ao
- * William Nascimento pela interpretação do algoritmo
- * 
- */
