@@ -1,0 +1,35 @@
+package com.fernanda.entities;
+
+import com.sun.javafx.beans.IDProperty;
+
+public class Funcionario {
+	
+	private Long id;
+	
+	private String name;
+	private String matricula;
+	private Double salario;
+	private Integer faltasNoAno;
+	private Float ultimaNotaAvaliacao;
+	private Integer qtdPremiosRecebidosAno;
+	private Boolean graduado;
+	private String nomeFaculdade;
+	private String nomeCurso;
+	
+	public Funcionario(Long id, String name, String matricula, Double salario, Integer faltasNoAno, Float ultimaNotaAvaliacao,
+			Integer qtdPremiosRecebidosAno, Boolean graduado, String nomeFaculdade, String nomeCurso) {
+		this.id = id;
+		this.name = name;
+		this.matricula = matricula;
+		this.salario = salario;
+		this.faltasNoAno = faltasNoAno;
+		this.ultimaNotaAvaliacao = ultimaNotaAvaliacao;
+		this.qtdPremiosRecebidosAno = qtdPremiosRecebidosAno;
+		this.graduado = graduado;
+		this.nomeFaculdade = nomeFaculdade;
+		this.nomeCurso = nomeCurso;
+	}
+	
+	
+
+}

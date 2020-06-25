@@ -1,0 +1,5 @@
+package com.fernanda.entities;
+
+public class Funcionario {
+
+}

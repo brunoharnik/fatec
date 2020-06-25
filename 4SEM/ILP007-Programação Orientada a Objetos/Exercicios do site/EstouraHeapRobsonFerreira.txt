@@ -1,0 +1,17 @@
+public class EstourarMemoriaHeap {
+
+	int[] vetor = new int [500];
+	EstourarMemoriaHeap proximo;
+
+public static void main (String args{}) throws InterruptedException {
+	System.out.println("Tentando estourar memoria heap");
+
+	EstourarMemoriaHeap raiz = new EstourarMemoriaHeap();
+	EstourarMemoriaHeap ultimo = raiz;
+	while (true) {
+		ultimo.proximo = new EstourarMemoriaHeap();
+		ultimo = ultimo.proximo;
+
+		Thread.sleep(1);
+
+}

@@ -1,0 +1,34 @@
+package com.fernanda.service;
+
+import java.util.Set;
+
+import com.fernanda.entities.Funcionario;
+
+public class RH {
+
+	private Set<Funcionario> funcionarios;
+	private double bonus;
+	
+	public Double valorBonus(Funcionario func) {
+		if (func.getFaltasNoAno() < 2) {
+			return (func.setSalario(func.getSalario()*1.3));
+			//func.setQtdPremiosRecebidosAno(1);
+		}
+		if (func.getFaltasNoAno() >=2 && func.getFaltasNoAno() < 4) {
+			
+		}
+		
+		return 3.0;
+	}
+	
+	public void mostrarBonusTodosFuncionarios() {
+		
+	}
+	
+	public void adicionarFuncionario (Funcionario func) {
+	}
+	
+	public void removerFuncionario (Funcionario func) {
+		
+	}
+}
