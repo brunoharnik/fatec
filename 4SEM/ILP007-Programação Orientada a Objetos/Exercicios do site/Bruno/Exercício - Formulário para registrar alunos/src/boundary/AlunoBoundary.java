@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import controller.AlunoController;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
@@ -42,13 +43,14 @@ public class AlunoBoundary extends BorderPane implements EventHandler<ActionEven
 	private DatePicker dateNascimento = new DatePicker();
 
 	private HBox hboxBotoes = new HBox();
+	private Button btnLimparCampos = new Button("Limpar campos");
 	private Button btnExcluir = new Button("Excluir");
 	private Button btnSalvar = new Button("Salvar");
 
 	private VBox vboxTabelaAlunos = new VBox();
 	private Label lblTodosOsAlunos = new Label("Todos os alunos: ");
 	private TableView<Aluno> tabelaAlunos;
-	
+
 	private DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
 	public AlunoBoundary() {
@@ -67,8 +69,9 @@ public class AlunoBoundary extends BorderPane implements EventHandler<ActionEven
 		vboxNascimento.getChildren().addAll(lblNascimento, dateNascimento, lblIdade);
 
 		btnExcluir.setOnAction(this);
+		btnLimparCampos.setOnAction(this);
 		btnSalvar.setOnAction(this);
-		hboxBotoes.getChildren().addAll(btnExcluir, btnSalvar);
+		hboxBotoes.getChildren().addAll(btnLimparCampos, btnExcluir, btnSalvar);
 
 		vboxFormulario.getChildren().addAll(hboxRa, hboxNome, vboxNascimento, hboxBotoes);
 
@@ -83,19 +86,15 @@ public class AlunoBoundary extends BorderPane implements EventHandler<ActionEven
 	private void gerarTabela() {
 		tabelaAlunos = new TableView<Aluno>(alunoController.listarAlunos());
 
-		TableColumn<Aluno, Integer> colId = new TableColumn<>("Id");
-		colId.setCellValueFactory(new PropertyValueFactory<Aluno, Integer>("id"));
-
 		TableColumn<Aluno, String> colRa = new TableColumn<>("RA");
 		colRa.setCellValueFactory(new PropertyValueFactory<Aluno, String>("ra"));
 
 		TableColumn<Aluno, String> colNome = new TableColumn<>("Nome");
 		colNome.setCellValueFactory(new PropertyValueFactory<Aluno, String>("nome"));
 
-		TableColumn<Aluno, Date> colNascimento = new TableColumn<>("Nascimento:");
-		colNascimento.setCellValueFactory(new PropertyValueFactory<Aluno, Date>("nascimento"));
+		TableColumn<Aluno, String> colNascimento = new TableColumn<>("Nascimento:");
+		colNascimento.setCellValueFactory(item -> new ReadOnlyStringWrapper(dtf.format(item.getValue().getNascimento())));
 
-		tabelaAlunos.getColumns().add(colId);
 		tabelaAlunos.getColumns().add(colRa);
 		tabelaAlunos.getColumns().add(colNome);
 		tabelaAlunos.getColumns().add(colNascimento);
@@ -105,6 +104,13 @@ public class AlunoBoundary extends BorderPane implements EventHandler<ActionEven
 				entityToBoundary(tabelaAlunos.getSelectionModel().getSelectedItem().getRa());
 			}
 		});
+	}
+	
+	private void clearAll() {
+		tabelaAlunos.getItems().clear();
+		txtNome.clear();
+		txtRa.clear();
+		dateNascimento.setValue(null);
 	}
 
 	private Aluno boundaryToEntity() {
@@ -125,14 +131,51 @@ public class AlunoBoundary extends BorderPane implements EventHandler<ActionEven
 
 	@Override
 	public void handle(ActionEvent event) {
+
 		if (event.getTarget().equals(btnSalvar)) {
-			Integer novoId = alunoController.cadastrarAluno(boundaryToEntity());
-			if (novoId != null) {
-				Alert alertCadastroSucesso = new Alert(AlertType.INFORMATION, "Aluno de id " + novoId + " cadastrado com sucesso!");
-				alertCadastroSucesso.show();
+			Aluno alunoX = alunoController.exibirAluno(boundaryToEntity().getRa());
+
+			// Novo cadastro
+			if (alunoX == null) {
+				Integer novoId = alunoController.cadastrarAluno(boundaryToEntity());
+
+				if (novoId != null) {
+					Alert alertCadastroSucesso = new Alert(AlertType.INFORMATION,
+							"Aluno de id " + novoId + " cadastrado com sucesso!");
+					alertCadastroSucesso.show();
+					clearAll();
+					tabelaAlunos.setItems(alunoController.listarAlunos());
+
+				} else {
+					Alert alertCadastroErro = new Alert(AlertType.ERROR, "Erro ao cadastrar o aluno.");
+					alertCadastroErro.show();
+				}
 			} else {
-				Alert alertCadastroErro = new Alert(AlertType.ERROR, "Erro ao cadastrar o aluno.");
-				alertCadastroErro.show();
+				if (alunoController.atualizarAluno(boundaryToEntity())) {
+					Alert alertEditarSucesso = new Alert(AlertType.INFORMATION,
+							"Aluno de ra " + alunoX.getRa() + " atualizado com sucesso!");
+					alertEditarSucesso.show();
+					clearAll();
+					tabelaAlunos.setItems(alunoController.listarAlunos());
+				} else {
+					Alert alertEditarErro = new Alert(AlertType.ERROR, "Erro ao editar o aluno.");
+					alertEditarErro.show();
+				}
+			}
+		} else if (event.getTarget().equals(btnLimparCampos)) {
+			txtNome.clear();
+			txtRa.clear();
+			dateNascimento.setValue(null);
+		} else if (event.getTarget().equals(btnExcluir)) {
+			if (alunoController.excluirAluno(txtRa.getText())) {
+				Alert alertExcluirSucesso = new Alert(AlertType.INFORMATION,
+						"Aluno de ra " + txtRa.getText() + " excluido com sucesso!");
+				alertExcluirSucesso.show();
+				clearAll();
+				tabelaAlunos.setItems(alunoController.listarAlunos());
+			} else {
+				Alert alertExcluirErro = new Alert(AlertType.ERROR, "Erro ao excluir o aluno.");
+				alertExcluirErro.show();
 			}
 		}
 	}

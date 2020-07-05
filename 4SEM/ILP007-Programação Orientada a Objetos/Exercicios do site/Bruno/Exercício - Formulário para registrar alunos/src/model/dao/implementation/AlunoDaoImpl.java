@@ -101,7 +101,7 @@ public class AlunoDaoImpl implements AlunoDao {
 		Set<Aluno> alunos = null;
 		try {
 			Connection conn = daoFactory.getConnection();
-			String sql = "SELECT * FROM aluno";
+			String sql = "SELECT * FROM aluno ORDER by nome";
 			PreparedStatement stmn = conn.prepareStatement(sql);
 			ResultSet rs = stmn.executeQuery();
 			alunos = new HashSet<Aluno>();

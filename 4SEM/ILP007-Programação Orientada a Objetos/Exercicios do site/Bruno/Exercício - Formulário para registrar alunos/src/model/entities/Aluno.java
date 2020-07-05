@@ -20,10 +20,6 @@ public class Aluno {
 		return id;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
 	public String getRa() {
 		return ra;
 	}

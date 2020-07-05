@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class DaoFactory {
 	private static final String URL = "jdbc:mariadb://localhost/aluno?alowMultiQueries=true",
 			USER = "root",
-			PASS = "blackout";
+			PASS = "root";
 
 	public DaoFactory() {
 		try {
